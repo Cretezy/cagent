@@ -1,0 +1,9 @@
+
+            version = 1
+            default_model = "alternate/alt-model"
+
+            [providers.custom.alternate]
+            type = "openai-compatible"
+            enabled = true
+            models = ["alt-model"]
+        

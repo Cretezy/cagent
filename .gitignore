@@ -1,0 +1,14 @@
+/target/
+.cagent/worktrees
+/.ignored
+
+# Local credentials and development data.
+.env
+.env.*
+!.env.example
+/tmp/
+
+# Editor and OS files.
+.DS_Store
+*.swp
+*.swo

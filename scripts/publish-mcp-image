@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+usage() {
+  echo "usage: $0 PACKAGE [--push] [--version VERSION] [--platform PLATFORMS]" >&2
+}
+
+die() {
+  echo "$*" >&2
+  exit 2
+}
+
+package="${1:-}"
+if [[ -z "$package" ]]; then
+  usage
+  exit 2
+fi
+shift
+
+push=false
+version="0.1.0"
+platform="linux/amd64,linux/arm64"
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --push) push=true; shift ;;
+    --version)
+      [[ $# -ge 2 ]] || die "missing value for --version"
+      version="$2"
+      shift 2
+      ;;
+    --platform)
+      [[ $# -ge 2 ]] || die "missing value for --platform"
+      platform="$2"
+      shift 2
+      ;;
+    -h|--help) usage; exit 0 ;;
+    *) die "unknown argument: $1" ;;
+  esac
+done
+
+[[ "$package" =~ ^[a-z0-9][a-z0-9-]*$ ]] || die "invalid package name: $package"
+[[ "$package" == "gitlab" ]] || die "unsupported MCP image package: $package (expected gitlab)"
+[[ "$version" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]*$ ]] || die "invalid image version: $version"
+[[ -n "$platform" ]] || die "platform list must not be empty"
+
+directory="$root/plugins/mcp/$package"
+containerfile="$directory/Containerfile"
+if [[ ! -f "$containerfile" ]]; then
+  die "unknown MCP package or missing Containerfile: $package"
+fi
+if [[ ! -f "$directory/smoke-test.sh" ]]; then
+  die "missing smoke test: $directory/smoke-test.sh"
+fi
+
+runtime="${OCI_RUNTIME:-}"
+if [[ -z "$runtime" ]]; then
+  if command -v docker >/dev/null 2>&1; then runtime=docker
+  elif command -v podman >/dev/null 2>&1; then runtime=podman
+  else echo "Docker or Podman is required" >&2; exit 1
+  fi
+fi
+
+repository="${MCP_IMAGE_REGISTRY:-ghcr.io/cretezy}/cagent-mcp-${package}"
+image="${repository}:${version}"
+if [[ "$push" == true ]]; then
+  if [[ "$runtime" != docker ]]; then
+    echo "multi-platform publishing currently requires Docker Buildx" >&2
+    exit 1
+  fi
+  command -v jq >/dev/null 2>&1 || { echo "jq is required to report the pushed digest" >&2; exit 1; }
+  metadata="$(mktemp)"
+  trap 'rm -f "${metadata:-}"' EXIT
+  "$runtime" buildx build --platform "$platform" --file "$containerfile" --tag "$image" \
+    --metadata-file "$metadata" --push "$directory"
+  digest="$(jq -er '."containerimage.digest" | select(test("^sha256:[0-9a-f]{64}$"))' "$metadata")" || {
+    echo "build succeeded, but Docker did not report a valid manifest digest" >&2
+    exit 1
+  }
+  echo "Published: $image"
+  echo "Digest: $digest"
+  echo "Package image: ${repository}@$digest"
+else
+  local_image="${image}-local"
+  "$runtime" build --file "$containerfile" --tag "$local_image" "$directory"
+  OCI_RUNTIME="$runtime" bash "$directory/smoke-test.sh" "$local_image"
+  echo "Built locally: $local_image"
+fi

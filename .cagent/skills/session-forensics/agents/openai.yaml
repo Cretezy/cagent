@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Forensics"
+  short_description: "Diagnose persisted Cagent sessions"
+  default_prompt: "Analyze this Cagent conversation ID and explain why it failed or stopped."

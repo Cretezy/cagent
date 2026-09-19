@@ -1,0 +1,13 @@
+{
+  "release-type": "simple",
+  "initial-version": "0.1.0",
+  "include-component-in-tag": false,
+  "packages": {
+    ".": {
+      "extra-files": [
+        { "type": "generic", "path": "Cargo.toml" },
+        { "type": "generic", "path": "Cargo.lock" }
+      ]
+    }
+  }
+}

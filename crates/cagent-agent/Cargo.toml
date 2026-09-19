@@ -1,0 +1,66 @@
+[package]
+name = "cagent-agent"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[dependencies]
+base64.workspace = true
+async-trait.workspace = true
+brush-parser.workspace = true
+chrono.workspace = true
+directories.workspace = true
+futures-core.workspace = true
+futures-util.workspace = true
+fs2.workspace = true
+google-cloud-auth.workspace = true
+http.workspace = true
+html2md.workspace = true
+image.workspace = true
+ignore.workspace = true
+indexmap.workspace = true
+include_dir.workspace = true
+notify.workspace = true
+jsonschema.workspace = true
+keyring.workspace = true
+pulldown-cmark.workspace = true
+portable-pty.workspace = true
+rusqlite.workspace = true
+reqwest.workspace = true
+rustls.workspace = true
+rmcp.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+similar.workspace = true
+simd-json.workspace = true
+sha2.workspace = true
+sqlparser.workspace = true
+syntect.workspace = true
+sublime-syntaxes.workspace = true
+thiserror.workspace = true
+tempfile.workspace = true
+time.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+tokio-tungstenite.workspace = true
+tokio-util.workspace = true
+toml.workspace = true
+toml_edit.workspace = true
+tracing.workspace = true
+trash.workspace = true
+unicode-segmentation.workspace = true
+unicode-width.workspace = true
+url.workspace = true
+uuid.workspace = true
+
+[target.'cfg(unix)'.dependencies]
+nix.workspace = true
+
+[dev-dependencies]
+axum.workspace = true
+rmcp = { workspace = true, features = ["server", "transport-streamable-http-server"] }
+
+[lints]
+workspace = true

@@ -1,0 +1,42 @@
+schema_version = 1
+id = "gitlab"
+name = "GitLab"
+version = "0.1.0"
+description = "Manage GitLab projects, merge requests, issues, pipelines, and related workflows."
+
+[parameters.api_url]
+label = "GitLab API URL"
+type = "string"
+description = "GitLab REST API URL, including /api/v4."
+default = "https://gitlab.com/api/v4"
+
+[parameters.permission_mode]
+label = "Permission mode"
+type = "string"
+description = "GitLab MCP permission mode, such as full or read_only."
+default = "full"
+
+[secrets.pat]
+label = "GitLab personal access token"
+type = "string"
+description = "Create a personal access token with the needed scopes at https://gitlab.com/-/user_settings/personal_access_tokens"
+
+[mcp]
+transport = "stdio"
+command = "node"
+args = ["/app/build/index.js"]
+runner = "oci"
+image = "ghcr.io/cretezy/cagent-mcp-gitlab:0.1.0"
+startup_timeout_seconds = 30
+request_timeout_seconds = 60
+
+[mcp.oci]
+network = true
+read_only_root = true
+memory = "512m"
+pids = 128
+
+[mcp.env]
+GITLAB_PERSONAL_ACCESS_TOKEN = "${secret:pat}"
+GITLAB_API_URL = "${parameter:api_url}"
+GITLAB_PERMISSION_MODE = "${parameter:permission_mode}"

@@ -1,0 +1,168 @@
+:root {
+	--sl-color-accent-low: #cfe8ff;
+	--sl-color-accent: #0065b3;
+	--sl-color-accent-high: #003c6b;
+	--sl-color-white: #111111;
+	--sl-color-gray-1: #252525;
+	--sl-color-gray-2: #303030;
+	--sl-color-gray-3: #555555;
+	--sl-color-gray-4: #8696a1;
+	--sl-color-gray-5: #dce0e8;
+	--sl-color-gray-6: #e7e9ef;
+	--sl-color-black: #eff1f5;
+}
+
+:root[data-theme='dark'] {
+	--sl-color-accent-low: #003c6b;
+	--sl-color-accent: #38a9ff;
+	--sl-color-accent-high: #cfe8ff;
+	--sl-color-white: #fcfcfc;
+	--sl-color-gray-1: #e7e9ef;
+	--sl-color-gray-2: #b8c2c9;
+	--sl-color-gray-3: #8696a1;
+	--sl-color-gray-4: #555555;
+	--sl-color-gray-5: #252525;
+	--sl-color-gray-6: #191919;
+	--sl-color-black: #111111;
+}
+
+.cretty-kicker,
+.cagent-home-kicker {
+	margin-block: 0 0.75rem;
+	color: var(--sl-color-accent);
+	font-size: var(--sl-text-sm);
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+}
+
+.cretty-intro,
+.cagent-home-intro {
+	max-width: 46rem;
+	font-size: var(--sl-text-xl);
+	line-height: 1.65;
+}
+
+.cretty-screenshot {
+	display: block;
+	width: 100%;
+	margin-block: 2.5rem 4rem;
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: 0.75rem;
+	box-shadow: var(--sl-shadow-md);
+}
+
+.cretty-quickstart {
+	margin-block: 4rem 2rem;
+	padding: 1.5rem;
+	border-inline-start: 3px solid var(--sl-color-accent);
+	background: var(--sl-color-gray-6);
+}
+
+.cretty-quickstart h2 {
+	margin-block: 0 0.65rem;
+}
+
+.cretty-quickstart p:last-child {
+	margin: 0;
+}
+
+.cagent-home-lead {
+	margin-block: 0 2.25rem;
+}
+
+.cagent-home-install {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1.5rem;
+	margin-block: 2rem 4rem;
+	padding: 1.25rem 1.5rem;
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: 0.75rem;
+	background: var(--sl-color-gray-6);
+}
+
+.cagent-home-install-label {
+	margin: 0 0 0.45rem;
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.cagent-home-install code {
+	font-size: var(--sl-text-sm);
+}
+
+.cagent-home-install a,
+.cagent-home-next a {
+	flex: none;
+	font-weight: 650;
+}
+
+.cagent-home-paths {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.9rem;
+	margin-block: 1.5rem 4rem;
+}
+
+.cagent-home-paths a {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	padding: 1.15rem 1.25rem;
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: 0.65rem;
+	color: var(--sl-color-white);
+	text-decoration: none;
+}
+
+.cagent-home-paths a:hover {
+	border-color: var(--sl-color-accent);
+	background: var(--sl-color-gray-6);
+}
+
+.cagent-home-paths span {
+	color: var(--sl-color-gray-2);
+	font-size: var(--sl-text-sm);
+	line-height: 1.5;
+}
+
+.cagent-home-next {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 2rem;
+	margin-block-start: 4rem;
+	padding-block-start: 2rem;
+	border-block-start: 1px solid var(--sl-color-gray-5);
+}
+
+.cagent-home-next h2,
+.cagent-home-next p {
+	margin: 0;
+}
+
+.cagent-home-next p {
+	margin-block-start: 0.35rem;
+	color: var(--sl-color-gray-2);
+}
+
+@media (max-width: 50rem) {
+	.cagent-home-install,
+	.cagent-home-next {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
+	.cagent-home-install code {
+		word-break: break-all;
+	}
+
+	.cagent-home-paths {
+		grid-template-columns: 1fr;
+	}
+}

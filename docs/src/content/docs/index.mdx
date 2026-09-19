@@ -1,0 +1,96 @@
+---
+title: Cagent
+description: A terminal coding agent with durable conversations, explainable permissions, and configurable workflows.
+template: splash
+hero:
+  tagline: Plan, edit, run, and review from your terminal—with durable history and permissions you can inspect.
+  actions:
+    - text: Install Cagent
+      link: /getting-started/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/Cretezy/cagent
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<section class="cagent-home-lead">
+	<p class="cagent-home-kicker">A coding agent built for the terminal</p>
+	<p class="cagent-home-intro">
+		Cagent understands your workspace, proposes guarded changes, runs commands, and keeps every
+		conversation locally resumable. Use it interactively for everyday development or headlessly
+		in scripts and automation.
+	</p>
+</section>
+
+<div class="cagent-home-install">
+	<div>
+		<p class="cagent-home-install-label">Install the latest release</p>
+		<code>curl --proto '=https' --tlsv1.2 -LsSf https://raw.githubusercontent.com/Cretezy/cagent/main/scripts/install.sh | sh</code>
+	</div>
+	<a href="/getting-started/">Installation details →</a>
+</div>
+
+## Why Cagent
+
+<CardGrid stagger>
+	<Card title="Work with guardrails" icon="lock">
+		Review exact edits and permission requests before they run. Saved rules remain explicit,
+		scoped, and editable. [Understand permissions](/permissions/)
+	</Card>
+	<Card title="Keep durable context" icon="document">
+		Resume local conversations, revisit branches, fork from earlier messages, and compact long
+		sessions without losing the transcript. [Manage conversations](/conversations/)
+	</Card>
+	<Card title="Shape the workflow" icon="setting">
+		Choose providers, models, modes, agents, skills, instructions, MCP servers, keybindings, and
+		the interface. [Configure Cagent](/configuration/)
+	</Card>
+	<Card title="Automate from the CLI" icon="terminal">
+		Run one-off tasks, stream JSON events, restrict tools, and validate the final result against a
+		JSON Schema. [Run headlessly](/headless/)
+	</Card>
+</CardGrid>
+
+## Start with a workflow
+
+<div class="cagent-home-paths">
+	<a href="/composer/">
+		<strong>Code interactively</strong>
+		<span>Write prompts, attach files, run shell input, and use slash commands.</span>
+	</a>
+	<a href="/modes/">
+		<strong>Modes &amp; Planning</strong>
+		<span>Switch modes, create custom modes, and choose how an accepted plan enters implementation.</span>
+	</a>
+	<a href="/agents/">
+		<strong>Build specialized agents</strong>
+		<span>Create reusable profiles and delegate independent work.</span>
+	</a>
+	<a href="/worktrees/">
+		<strong>Isolate a task</strong>
+		<span>Ask Cagent to work in a Git worktree or Jujutsu workspace.</span>
+	</a>
+	<a href="/headless/">
+		<strong>Automate a task</strong>
+		<span>Run a prompt in CI, stream JSON events, or require structured output.</span>
+	</a>
+	<a href="/configuration/">
+		<strong>Customize Cagent</strong>
+		<span>Configure providers, permissions, instructions, skills, MCP, and the interface.</span>
+	</a>
+	<a href="/troubleshooting/">
+		<strong>Resolve a problem</strong>
+		<span>Diagnose provider, model, configuration, MCP, editor, and history issues.</span>
+	</a>
+</div>
+
+<div class="cagent-home-next">
+	<div>
+		<h2>Ready to start?</h2>
+		<p>Install Cagent, connect a provider, and send your first request in a few minutes.</p>
+	</div>
+	<a href="/getting-started/">Open the getting started guide →</a>
+</div>
