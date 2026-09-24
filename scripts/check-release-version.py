@@ -18,7 +18,7 @@ if manifest["workspace"]["package"]["version"] != version or any(
 ):
     sys.exit("Cagent's workspace and lockfile versions must match version.txt")
 
-if (root / "Cargo.toml").read_text().count("x-release-please-version") != 1 or (
-    (root / "Cargo.lock").read_text().count("x-release-please-version") != len(packages)
-):
-    sys.exit("Restore the release-please annotations in Cargo.toml and Cargo.lock")
+# Cargo rewrites Cargo.lock without preserving comments, so its versions are
+# checked above instead of relying on release-please annotations in the lockfile.
+if (root / "Cargo.toml").read_text().count("x-release-please-version") != 1:
+    sys.exit("Restore the release-please annotation in Cargo.toml")
