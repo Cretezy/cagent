@@ -715,7 +715,7 @@ checksum = "ade8366b8bd5ba243f0a58f036cc0ca8a2f069cff1a2351ef1cac6b083e16fc0"
 
 [[package]]
 name = "cagent-acp"
-version = "0.1.0" # x-release-please-version
+version = "0.1.0"
 dependencies = [
  "agent-client-protocol",
  "async-trait",
@@ -730,7 +730,7 @@ dependencies = [
 
 [[package]]
 name = "cagent-agent"
-version = "0.1.0" # x-release-please-version
+version = "0.1.0"
 dependencies = [
  "async-trait",
  "axum",
@@ -786,7 +786,7 @@ dependencies = [
 
 [[package]]
 name = "cagent-cli"
-version = "0.1.0" # x-release-please-version
+version = "0.1.0"
 dependencies = [
  "cagent-acp",
  "cagent-agent",
