@@ -8590,9 +8590,7 @@ async fn immediate_safe_compounds_wait_for_inventory_without_prompting() {
     let rustfmt = "rustfmt --edition 2024 --config skip_children=true --check crates/cagent-agent/src/tools/shell/classifiers/generally_safe/rust.rs crates/cagent-agent/src/tools/shell/classifiers/cargo.rs";
     let commands = [
         format!("sed -n '45,75p' docs/shell-and-terminals.md; {rustfmt}"),
-        format!(
-            "jj --ignore-working-copy diff --stat; {rustfmt}; cargo test -p cagent-agent cargo_fmt_"
-        ),
+        format!("rg --files docs; {rustfmt}; cargo test -p cagent-agent cargo_fmt_"),
     ];
     let provider = Arc::new(ScriptedMockProvider::sequence(vec![
         vec![

@@ -10,7 +10,7 @@ response="$(
     "$runtime" run --rm -i --network none \
       -e GITLAB_PERSONAL_ACCESS_TOKEN=smoke-test-token \
       -e GITLAB_API_URL=https://gitlab.example.test/api/v4 \
-      -e GITLAB_PERMISSION_MODE=read_only \
+      -e GITLAB_PERMISSION_MODE=readonly \
       "$image"
 )"
 

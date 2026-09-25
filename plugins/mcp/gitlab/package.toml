@@ -13,7 +13,7 @@ default = "https://gitlab.com/api/v4"
 [parameters.permission_mode]
 label = "Permission mode"
 type = "string"
-description = "GitLab MCP permission mode, such as full or read_only."
+description = "GitLab MCP permission mode: readonly, modify, or full."
 default = "full"
 
 [secrets.pat]
