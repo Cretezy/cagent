@@ -1,6 +1,7 @@
 {
   "release-type": "simple",
   "initial-version": "0.1.0",
+  "pull-request-title-pattern": "release: v${version}",
   "include-component-in-tag": false,
   "packages": {
     ".": {
