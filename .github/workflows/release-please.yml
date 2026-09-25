@@ -16,8 +16,31 @@ jobs:
       # A GitHub Actions token cannot trigger the tag workflows that package
       # binaries and MCP images. Use a repository-scoped token for this action.
       - name: Create release PR or tag
+        id: release
         uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      - name: Check out release PR branch
+        if: steps.release.outputs.prs_created == 'true'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+
+      - name: Sync workspace lockfile in release PR
+        if: steps.release.outputs.prs_created == 'true'
+        env:
+          PR_BRANCH: ${{ fromJSON(steps.release.outputs.pr).headBranchName }}
+        run: |
+          cargo update --workspace
+          python3 scripts/check-release-version.py
+          if ! git diff --quiet -- Cargo.lock; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add Cargo.lock
+            git commit -m "chore: sync workspace lockfile for release"
+            git push origin "HEAD:$PR_BRANCH"
+          fi
