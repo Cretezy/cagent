@@ -21,20 +21,25 @@ jobs:
       - name: Install Rust tooling
         run: rustup component add clippy rustfmt
 
+      - name: Check release versions
+        run: python3 scripts/check-release-version.py
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
       - name: Install test tooling
         run: |
           sudo apt-get update
           sudo apt-get install -y mold fd-find
           sudo ln -s /usr/bin/fdfind /usr/local/bin/fd
 
-      - name: Check release versions
-        run: python3 scripts/check-release-version.py
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          cache-on-failure: true
 
       - name: Test
         run: cargo test --workspace --locked
-
-      - name: Check formatting
-        run: cargo fmt --all -- --check
 
       - name: Lint
         run: cargo clippy --workspace --all-targets --locked -- -D warnings
