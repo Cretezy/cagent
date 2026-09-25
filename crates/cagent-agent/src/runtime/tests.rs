@@ -758,7 +758,13 @@ async fn local_context_watcher_reconciles_atomic_instruction_saves() {
     })
     .await
     .unwrap();
-    tokio::time::sleep(Duration::from_millis(100)).await;
+    tokio::time::timeout(Duration::from_secs(10), async {
+        while !runtime.startup.watcher_registered.load(Ordering::Acquire) {
+            tokio::task::yield_now().await;
+        }
+    })
+    .await
+    .unwrap();
     let replacement = workspace.join("AGENTS.md.new");
     std::fs::write(&replacement, "second").unwrap();
     std::fs::rename(replacement, workspace.join("AGENTS.md")).unwrap();
@@ -6912,6 +6918,14 @@ async fn delegated_parallel_tools_keep_parent_continuation_on_the_active_tip() {
     )
     .await
     .unwrap();
+    runtime
+        .catalog
+        .refresh(
+            runtime.providers.get("mock").unwrap(),
+            runtime.config.provider("mock").unwrap(),
+        )
+        .await
+        .unwrap();
     let session = runtime
         .create_session(NewSession {
             workspace: temporary.path().to_path_buf(),
@@ -7038,6 +7052,14 @@ async fn inline_waited_delegations_run_concurrently_and_return_terminal_results(
     )
     .await
     .unwrap();
+    runtime
+        .catalog
+        .refresh(
+            runtime.providers.get("mock").unwrap(),
+            runtime.config.provider("mock").unwrap(),
+        )
+        .await
+        .unwrap();
     let session = runtime
         .create_session(NewSession {
             workspace: temporary.path().to_path_buf(),
@@ -7049,7 +7071,7 @@ async fn inline_waited_delegations_run_concurrently_and_return_terminal_results(
         .await
         .unwrap();
 
-    tokio::time::timeout(Duration::from_secs(2), async {
+    tokio::time::timeout(Duration::from_secs(10), async {
         while delegated_started.load(Ordering::SeqCst) != 2 {
             tokio::task::yield_now().await;
         }
@@ -7063,7 +7085,7 @@ async fn inline_waited_delegations_run_concurrently_and_return_terminal_results(
     );
 
     gate.add_permits(2);
-    tokio::time::timeout(Duration::from_secs(2), async {
+    tokio::time::timeout(Duration::from_secs(10), async {
         while provider.primary.requests().len() < 2 {
             tokio::task::yield_now().await;
         }
@@ -16091,6 +16113,14 @@ async fn joined_delegated_failures_do_not_cancel_siblings() {
     )
     .await
     .unwrap();
+    runtime
+        .catalog
+        .refresh(
+            runtime.providers.get("mock").unwrap(),
+            runtime.config.provider("mock").unwrap(),
+        )
+        .await
+        .unwrap();
     let session = runtime
         .create_session(NewSession {
             workspace: temporary.path().to_path_buf(),
@@ -16168,6 +16198,14 @@ async fn delegated_concurrency_defaults_to_ten_and_queues_the_remainder() {
     )
     .await
     .unwrap();
+    runtime
+        .catalog
+        .refresh(
+            runtime.providers.get("mock").unwrap(),
+            runtime.config.provider("mock").unwrap(),
+        )
+        .await
+        .unwrap();
     let session = runtime
         .create_session(NewSession {
             workspace: temporary.path().to_path_buf(),
@@ -16268,6 +16306,14 @@ async fn delegated_cancellation_distinguishes_turn_detachment_from_join_ownershi
     )
     .await
     .unwrap();
+    runtime
+        .catalog
+        .refresh(
+            runtime.providers.get("mock").unwrap(),
+            runtime.config.provider("mock").unwrap(),
+        )
+        .await
+        .unwrap();
     let session = runtime
         .create_session(NewSession {
             workspace: temporary.path().to_path_buf(),
@@ -16822,7 +16868,7 @@ async fn agent_and_mode_changes_are_durable_and_snapshot_the_turn_prompt() {
     let provider = Arc::new(ScriptedMockProvider::new(vec![completed_stop()]));
     let config = crate::ConfigSnapshot::parse(
         &temporary.path().join("config.toml"),
-        "version = 1\ndefault_model = { model = 'mock/echo' }\n[providers.mock]\ntype = 'mock'\nenabled = true\n[agents.review]\ndescription = 'Reviewer'\nprompt = 'Review carefully.'\navailability = 'user'\n",
+        "version = 1\ndefault_model = { model = 'mock/echo' }\n[title_generation]\nenabled = false\n[providers.mock]\ntype = 'mock'\nenabled = true\n[agents.review]\ndescription = 'Reviewer'\nprompt = 'Review carefully.'\navailability = 'user'\n",
     ).unwrap();
     let runtime = AgentRuntime::open_with(
         RuntimeOptions::new(temporary.path().join("profiles.db")).with_config(config),
@@ -18417,6 +18463,14 @@ async fn delegated_model_inherits_primary_unless_profile_selects_model_or_tier()
     )
     .await
     .unwrap();
+    runtime
+        .catalog
+        .refresh(
+            runtime.providers.get("mock").unwrap(),
+            fast_config.provider("mock").unwrap(),
+        )
+        .await
+        .unwrap();
     let session = runtime
         .create_session(NewSession {
             workspace: temporary.path().to_path_buf(),

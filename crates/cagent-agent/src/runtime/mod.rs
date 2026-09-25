@@ -91,6 +91,8 @@ struct StartupResourceCoordinator {
     instructions: crate::InstructionSnapshot,
     instruction_paths: Option<(std::path::PathBuf, std::path::PathBuf)>,
     watcher_lifetime: Arc<()>,
+    #[cfg(test)]
+    watcher_registered: Arc<AtomicBool>,
     reload: Arc<tokio::sync::Mutex<Option<Shared<BoxFuture<'static, ()>>>>>,
     resource_reload: Arc<tokio::sync::Mutex<()>>,
     config_store: crate::ConfigStore,
@@ -122,6 +124,8 @@ impl StartupResourceCoordinator {
             instructions,
             instruction_paths,
             watcher_lifetime: Arc::new(()),
+            #[cfg(test)]
+            watcher_registered: Arc::new(AtomicBool::new(false)),
             reload: Arc::new(tokio::sync::Mutex::new(None)),
             resource_reload: Arc::new(tokio::sync::Mutex::new(())),
             config_store,
@@ -236,6 +240,8 @@ impl StartupResourceCoordinator {
         let resource_reload = self.resource_reload.clone();
         let instruction_paths = Some((paths.config_dir.clone(), paths.workspace.clone()));
         let watcher_lifetime = Arc::downgrade(&self.watcher_lifetime);
+        #[cfg(test)]
+        let watcher_registered = self.watcher_registered.clone();
         let runtime = tokio::runtime::Handle::current();
         std::thread::spawn(move || {
             let _span =
@@ -285,6 +291,8 @@ impl StartupResourceCoordinator {
                 );
             };
             register_targets(&mut watcher);
+            #[cfg(test)]
+            watcher_registered.store(true, Ordering::Release);
             loop {
                 if watcher_lifetime.upgrade().is_none() {
                     break;

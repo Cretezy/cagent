@@ -11,6 +11,23 @@ permissions:
   contents: read
 
 jobs:
+  validation:
+    name: Version and formatting
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install Rust tooling
+        run: rustup component add rustfmt
+
+      - name: Check release versions
+        run: python3 scripts/check-release-version.py
+
+      - name: Check formatting
+        if: ${{ !cancelled() }}
+        run: cargo fmt --all -- --check
+
   rust:
     name: Rust checks
     runs-on: ubuntu-24.04
@@ -21,16 +38,10 @@ jobs:
       - name: Install Rust tooling
         run: rustup component add clippy rustfmt
 
-      - name: Check release versions
-        run: python3 scripts/check-release-version.py
-
-      - name: Check formatting
-        run: cargo fmt --all -- --check
-
       - name: Install test tooling
         run: |
           sudo apt-get update
-          sudo apt-get install -y mold fd-find
+          sudo apt-get install -y mold fd-find ripgrep
           sudo ln -s /usr/bin/fdfind /usr/local/bin/fd
 
       - name: Cache Rust dependencies
@@ -39,7 +50,9 @@ jobs:
           cache-on-failure: true
 
       - name: Test
-        run: cargo test --workspace --locked
+        id: test
+        run: cargo test --workspace --locked --no-fail-fast
 
       - name: Lint
+        if: ${{ !cancelled() && steps.test.outcome != 'skipped' }}
         run: cargo clippy --workspace --all-targets --locked -- -D warnings

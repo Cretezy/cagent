@@ -3196,15 +3196,13 @@ fn welcome_card_directory_width_is_capped_and_respects_terminal_width() {
 #[test]
 fn welcome_directory_precedes_aligned_model_metadata() {
     let lines = welcome_lines("openai/gpt-5.6-luna", Some("high"), true, 80);
-    let rendered = welcome_card_rows(
-        &lines,
-        Path::new("/home/charles/Projects/coding-agent"),
-        test_session_id(),
-        80,
-    )
-    .iter()
-    .map(ToString::to_string)
-    .collect::<Vec<_>>();
+    let workspace =
+        PathBuf::from(std::env::var_os("HOME").expect("test environment has a home directory"))
+            .join("Projects/coding-agent");
+    let rendered = welcome_card_rows(&lines, &workspace, test_session_id(), 80)
+        .iter()
+        .map(ToString::to_string)
+        .collect::<Vec<_>>();
     assert!(rendered[3].contains("directory: ~/Projects/coding-agent"));
     assert!(rendered[4].contains("session:   cagent-0.1.0-260214.1432.950-1ae287ab"));
     assert!(rendered[5].contains("model:     gpt-5.6-luna"));

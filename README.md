@@ -62,8 +62,8 @@ cagent --trust exec --output json "Run the tests and summarize failures"
 
 ## Documentation
 
-- [Getting started](docs/src/content/docs/getting-started.md)
-- [Providers and models](docs/src/content/docs/providers-and-models.md)
-- [Permissions](docs/src/content/docs/permissions.md)
-- [Headless execution](docs/src/content/docs/headless.md)
-- [Full documentation source](docs/src/content/docs/index.mdx)
+- [Full documentation](https://cagent-docs.cretezy.workers.dev/)
+- [Getting started](https://cagent-docs.cretezy.workers.dev/getting-started/)
+- [Providers and models](https://cagent-docs.cretezy.workers.dev/providers-and-models/)
+- [Permissions](https://cagent-docs.cretezy.workers.dev/permissions/)
+- [Headless execution](https://cagent-docs.cretezy.workers.dev/headless/)

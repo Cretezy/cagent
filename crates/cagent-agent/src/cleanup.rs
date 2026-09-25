@@ -189,10 +189,11 @@ fn inspect_database(database: &Path) -> Result<InventoryItem, CleanupIssue> {
     connection
         .pragma_update(None, "query_only", "ON")
         .map_err(|error| issue(Some(id), database, error.to_string()))?;
-    let (stored_id, updated_at, title, message_count) = connection
+    let (stored_id, updated_at, title, message_count, queued_count) = connection
         .query_row(
             "SELECT id, updated_at, COALESCE(title, ''),
-                    (SELECT COUNT(*) FROM nodes WHERE kind IN ('user_message', 'assistant_message'))
+                    (SELECT COUNT(*) FROM nodes WHERE kind IN ('user_message', 'assistant_message')),
+                    (SELECT COUNT(*) FROM queued_messages WHERE conversation_id = conversations.id)
              FROM conversations LIMIT 1",
             [],
             |row| {
@@ -201,6 +202,7 @@ fn inspect_database(database: &Path) -> Result<InventoryItem, CleanupIssue> {
                     row.get::<_, String>(1)?,
                     row.get::<_, String>(2)?,
                     row.get::<_, i64>(3)?,
+                    row.get::<_, i64>(4)?,
                 ))
             },
         )
@@ -226,7 +228,7 @@ fn inspect_database(database: &Path) -> Result<InventoryItem, CleanupIssue> {
         database: database.to_path_buf(),
         bytes,
         updated_at,
-        empty: message_count == 0 && title.trim().is_empty(),
+        empty: message_count == 0 && queued_count == 0 && title.trim().is_empty(),
     })
 }
 
@@ -552,7 +554,7 @@ mod tests {
         std::fs::create_dir_all(storage.join("conversation-open-locks")).unwrap();
         let path = directory.join(format!("{id}.db"));
         let connection = Connection::open(&path).unwrap();
-        connection.execute_batch("CREATE TABLE conversations(id TEXT, updated_at TEXT, title TEXT); CREATE TABLE nodes(kind TEXT); INSERT INTO conversations VALUES ('placeholder', '1786821956420', NULL); INSERT INTO nodes VALUES ('user_message');").unwrap();
+        connection.execute_batch("CREATE TABLE conversations(id TEXT, updated_at TEXT, title TEXT); CREATE TABLE nodes(kind TEXT); CREATE TABLE queued_messages(conversation_id TEXT); INSERT INTO conversations VALUES ('placeholder', '1786821956420', NULL); INSERT INTO nodes VALUES ('user_message');").unwrap();
         connection
             .execute("UPDATE conversations SET id = ?1", [id.to_string()])
             .unwrap();
@@ -574,6 +576,29 @@ mod tests {
         let connection = Connection::open(&database).unwrap();
         connection
             .execute("UPDATE conversations SET title = NULL", [])
+            .unwrap();
+        drop(connection);
+        assert!(inspect_database(&database).unwrap().empty);
+    }
+
+    #[test]
+    fn queued_input_keeps_an_untitled_conversation_from_being_empty() {
+        let temporary = tempfile::TempDir::new().unwrap();
+        let id = ConversationId::new();
+        let database = create_database(temporary.path(), id);
+        let connection = Connection::open(&database).unwrap();
+        connection.execute("DELETE FROM nodes", []).unwrap();
+        connection
+            .execute(
+                "INSERT INTO queued_messages(conversation_id) VALUES (?1)",
+                [id.to_string()],
+            )
+            .unwrap();
+        drop(connection);
+        assert!(!inspect_database(&database).unwrap().empty);
+        let connection = Connection::open(&database).unwrap();
+        connection
+            .execute("DELETE FROM queued_messages", [])
             .unwrap();
         drop(connection);
         assert!(inspect_database(&database).unwrap().empty);
