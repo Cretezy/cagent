@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/Cretezy/cagent/compare/v0.1.1...v0.1.2) (2026-10-03)
+
+
+### Bug Fixes
+
+* **ci:** migrate ARM64 release runner to macos-15 ([#3](https://github.com/Cretezy/cagent/issues/3)) ([9047bcf](https://github.com/Cretezy/cagent/commit/9047bcff6a0018b8bd8c0d4a1624a922713ff936))
+
 ## [0.1.1](https://github.com/Cretezy/cagent/compare/v0.1.0...v0.1.1) (2026-09-26)
 
 
